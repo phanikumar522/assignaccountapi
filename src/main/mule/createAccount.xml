@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="2982c3e3-282f-4d24-a511-c88be4aa8e55" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="integration" />
+	</db:config>
+	<flow name="createAccountFlow" doc:id="cb2e68f3-52e7-47f4-b6da-6f9e90886316" >
+		<logger level="INFO" doc:name="Logger" doc:id="d916803f-e9de-4e3c-8325-f80aea40b15c" message="createAccountFlow Starts............."/>
+		<db:insert doc:name="Insert" doc:id="20322a2b-6ff8-4a16-bd0f-0124f9130a15" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into Account(name, gender, phone, email, dateOfBirth) 
+values (:name, :gender, :MobileNo, :emailId, :dob) ;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	name:payload.name,
+	gender:payload.gender,
+	MobileNo:payload.phone,
+	emailId:payload.email,
+	dob:payload.dateOfBirth
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="7ba22a67-b3d2-4000-9928-73104a198199" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode:201,
+	message:"aAccount created successfull"
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[201]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="e980f97d-9857-4333-beaf-a229d7f5d8fa" message="response of createAccountFlow..................."/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="3940b51a-ff7c-4f62-9180-9b4dfd90b692" >
+				<ee:transform doc:name="Transform Message" doc:id="cec76e21-8855-4160-83fd-685982d7646d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode:500,
+	message:"DB server is down"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>
