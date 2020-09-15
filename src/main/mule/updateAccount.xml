@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="updateAccountFlow" doc:id="0bb199f9-7d47-412a-a7ea-fc0ab6b2d6f1" >
+		<logger level="INFO" doc:name="Logger" doc:id="0593c49f-37fa-48aa-a776-6d6501308da1" message="updateAccountFlow starts......................"/>
+		<db:update doc:name="Update" doc:id="df631175-9afa-4bf3-af77-f0399a21d96c" config-ref="Database_Config">
+			<db:sql ><![CDATA[update Account set phone=:MobileNo,name=:name,gender=:gender,email=:emailId,dateOfBirth=:dob where accountId=:accId;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	name:payload.name,
+	gender:payload.gender,
+	emailId:payload.email,
+	MobileNo:payload.phone,
+	dob:payload.dateOfBirth,
+	accId:attributes.uriParams.account_id
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="d468fac3-dcfb-4628-97d7-75c6073472dd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode:201,
+	message:"Account updated"
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[201]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c36d0b84-dd98-4a53-b153-e3ab8740b572" message="response of updateAccountFlow....................."/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4137b016-8bfa-448c-8109-aef7fdd3b311" >
+				<ee:transform doc:name="Transform Message" doc:id="fb17863a-b1f2-4e63-af86-4ebebe953a42" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode:500,
+	message:"server is in down state"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

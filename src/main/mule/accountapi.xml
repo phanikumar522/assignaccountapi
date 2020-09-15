@@ -128,4 +128,19 @@ output application/json
 		<flow-ref doc:name="createAccountFlow" doc:id="d57a6f8e-b255-46f2-8ce7-b2aa3aca9e52" name="createAccountFlow"/>
 		<logger level="INFO" doc:name="Logger" doc:id="8466f6f0-f183-4952-89eb-380ea9ce5e2e" message="final response of createAccount......................."/>
     </flow>
+	<flow name="get:\accounts\(account_id):accountapi-config" doc:id="0448097c-3dd5-42cb-8eb8-36472a3ade51" >
+		<logger level="INFO" doc:name="Logger" doc:id="eaf85bc9-3f24-4177-a2ba-8bac8271ee2d" message="request received............#[attributes.uriParams]" />
+		<flow-ref doc:name="getAccountDetailsFlow" doc:id="955e349e-ece5-4f09-8633-09c3e25311e9" name="getAccountDetailsFlow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="233e756d-9ead-4fb4-82c7-027075ed3992" message="final response of createAccount......................." />
+	</flow>
+	<flow name="put:\accounts\(account_id):accountapi-config" doc:id="4ec242e8-54d0-420d-ad7e-47db481856f7" >
+		<logger level="INFO" doc:name="Logger" doc:id="d9039f99-6f13-4a80-b50e-9022c97c907f" message="request received............#[attributes.uriParams]" />
+		<flow-ref doc:name="updateAccountFlow" doc:id="8f9ebf13-5b63-44c9-b86b-7a9634ab42cf" name="updateAccountFlow" />
+		<logger level="INFO" doc:name="Logger" doc:id="64ebbb4e-8306-487e-9fce-86b99163a4c3" message="final response of updateAccount......................." />
+	</flow>
+	<flow name="delete:\accounts\(account_id):accountapi-config" doc:id="29759a7c-b302-471e-88b4-b3ec5ca99396" >
+		<logger level="INFO" doc:name="Logger" doc:id="6715baf5-a4a7-49ee-9acf-c4c3477cf572" message="request received............#[attributes.uriParams]" />
+		<flow-ref doc:name="deleteAccountFlow" doc:id="45abfa0f-a008-480d-9783-e54563ca29cb" name="deleteAccountFlow" />
+		<logger level="INFO" doc:name="Logger" doc:id="7e7aa67a-92b0-42af-b2aa-15eb24f2be9b" message="final response of deleteAccount......................." />
+	</flow>
 </mule>

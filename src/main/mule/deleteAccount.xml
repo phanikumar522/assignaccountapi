@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="deleteAccountFlow" doc:id="10aa5626-b045-4f38-9ebc-6e35565d8725" >
+		<logger level="INFO" doc:name="Logger" doc:id="48dba15a-3116-462e-9fa8-1295882e966c" message="deleteAccountFlow starts................."/>
+		<db:delete doc:name="Delete" doc:id="2fd6d629-c1ca-41e4-854a-7f95b04aaeaf" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from Account where accountId=:accId;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	accId:attributes.uriParams.account_id
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="834e9b4e-cedb-4ac8-97a5-e3db890b1cd8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode:200,
+	message:"Accounted Deleted sucessfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="6dc68028-8d8a-49f3-8eb1-6c7c2b8738e8" message="response of  deleteAccountFlow................."/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="38a50808-c670-4788-84a5-7975aade3fad" >
+				<ee:transform doc:name="Transform Message" doc:id="d2cf0c78-35a3-4f11-9b22-f633dad98f3d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode:500,
+	message:"server is in down state"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

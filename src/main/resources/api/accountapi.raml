@@ -4,6 +4,7 @@ baseUri: http://localhost:8081/api
 types:
   Account: !include datatypes/Account.raml
   AccountResponse: !include datatypes/AccountResponse.raml
+  AccountUpdate: !include datatypes/AccountUpdate.raml
 /accounts:
  post:
    body:
@@ -11,11 +12,44 @@ types:
        type: Account
        example: !include examples/AccountExample.raml
    responses:
+     201:
+       body:
+         application/json:
+           type: AccountResponse
+           example: !include examples/AccountResponseExample.raml
+         
+ /{account_id}:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: AccountResponse
+            example: !include examples/AccountResponseExample.raml
+  put:
+    body:
+      application/json:
+        type: AccountUpdate
+        example:  !include examples/AccountUpdateExample.raml
+    responses:
+      201:
+        body:
+          application/json:
+            type: AccountResponse
+            example:  !include examples/AccountResponseExample.raml
+  delete:
+   responses:
      200:
        body:
          application/json:
            type: AccountResponse
            example: !include examples/AccountResponseExample.raml
+                       
+                  
+                    
+              
+     
+           
                  
          
  

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="accountDetailsDataTypes" format="json">
+      <types:shape format="weave" example="examples/bulkDetails-2.json"><![CDATA[%dw 2.0
+
+type accountDetailsDataTypes = Array<{|  name: String,   gender: String,   phone: String,   email: String,   dateOfBirth: String|}> {"example": "[{\\\"name\\\":\\\"hari\\\",\\\"gender\\\":\\\"male\\\",\\\"phone\\\":\\\"8999999998\\\",\\\"email\\\":\\\"hari@gmail.com\\\",\\\"dateOfBirth\\\":\\\"5-9-2020\\\"},{\\\"name\\\":\\\"chandra\\\",\\\"gender\\\":\\\"male\\\",\\\"phone\\\":\\\"9999899998\\\",\\\"email\\\":\\\"chandra@gmail.com\\\",\\\"dateOfBirth\\\":\\\"9-5-2020\\\"},{\\\"name\\\":\\\"krish\\\",\\\"gender\\\":\\\"male\\\",\\\"phone\\\":\\\"8999899998\\\",\\\"email\\\":\\\"krish@gmail.com\\\",\\\"dateOfBirth\\\":\\\"9-9-2020\\\"},{\\\"name\\\":\\\"vivek\\\",\\\"gender\\\":\\\"male\\\",\\\"phone\\\":\\\"8899899998\\\",\\\"email\\\":\\\"vivek@gmail.com\\\",\\\"dateOfBirth\\\":\\\"9-9-2019\\\"},{\\\"name\\\":\\\"varshith\\\",\\\"gender\\\":\\\"male\\\",\\\"phone\\\":\\\"8899899988\\\",\\\"email\\\":\\\"varshith@gmail.com\\\",\\\"dateOfBirth\\\":\\\"9-5-2019\\\"}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#77c03a56-117d-4fcb-bbaf-087bb46a281c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="accountDetailsDataTypes"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

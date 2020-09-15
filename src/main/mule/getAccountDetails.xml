@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getAccountDetailsFlow" doc:id="b3850a51-dbf0-43e4-99fc-e307d6a17998" >
+		<logger level="INFO" doc:name="Logger" doc:id="e071bd5e-bf57-4e79-9616-39eaff227af6" message="getAccountDetailsFlow starts................"/>
+		<db:select doc:name="Select" doc:id="0cfed71e-766b-438a-9498-5cbc5fdbf685" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from Account where accountId=:accId;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	accId:attributes.uriParams.account_id
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="8b9eba12-f74c-4d76-b230-06565d383f97" >
+			<when expression="#[sizeOf(payload)&gt;0]">
+				<ee:transform doc:name="Transform Message" doc:id="e0300416-04e0-484f-b1d1-0af56186f45a" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="82acc602-c9a6-46eb-b10e-11e626696d47" type="ACC:ACCOUNT_ID_NOT_FOUND" description="AccountId Not Found"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="dc2659dc-3a27-4d0f-8d27-8afd15f99ff9" message="response of getAccountDetails..................#[payload]"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="d905a848-80e0-4aa4-a9d9-ff504a97e10a" type="ACC:ACCOUNT_ID_NOT_FOUND">
+				<ee:transform doc:name="Transform Message" doc:id="f96f601c-d36b-4b03-917a-e25c98e54586" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode:400,
+	message:"AccountId not found"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="146eda96-34cb-439c-afe3-aac06e638926" type="DB:CONNECTIVITY">
+				<ee:transform doc:name="Transform Message" doc:id="77890848-de0c-45ce-a495-6194c759c300" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode:500,
+	message:"DB server is down"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

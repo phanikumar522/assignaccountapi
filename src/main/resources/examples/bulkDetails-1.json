@@ -1,0 +1,39 @@
+[
+ {
+    "name": "hari",
+    "gender": "male",
+    "phone": "8999999998",
+    "email": "hari@gmail.com",
+    "dateOfBirth": "5-9-2020"
+ },
+  {
+   "name": "chandra",
+    "gender": "male",
+    "phone": "9999899998",
+    "email": "chandra@gmail.com",
+    "dateOfBirth": "9-5-2020"
+  },
+  {
+    "name": "krish",
+    "gender": "male",
+    "phone": "8999899998",
+    "email": "krish@gmail.com",
+    "dateOfBirth": "9-9-2020"
+  },
+  {
+    "name": "vivek",
+    "gender": "male",
+    "phone": "8899899998",
+    "email": "vivek@gmail.com",
+    "dateOfBirth": "9-9-2019"
+   },
+   {
+    "name": "varshith",
+    "gender": "male",
+    "phone": "8899899988",
+    "email": "varshith@gmail.com",
+    "dateOfBirth": "9-5-2019"
+	}
+]	
+   
+   
